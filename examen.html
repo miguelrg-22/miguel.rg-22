@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Examen tipo test</title>
+    <style>
+        :root {
+            --bg: #dbc9b9;
+            --card: #ffffff;
+            --accent: #a37b59;
+            --muted: #6b7280;
+            --correct: #16a34a;
+            --wrong: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            margin: 0;
+            background: linear-gradient(180deg, var(--bg), #eef2ff 60%);
+            color: #111
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: 32px auto;
+            padding: 20px
+        }
+
+        header {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 18px
+        }
+
+        h1 {
+            font-size: 1.35rem;
+            margin: 0
+        }
+
+        .meta {
+            margin-left: auto;
+            text-align: right;
+            color: var(--muted);
+            font-size: 0.9rem
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: 0;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600
+        }
+
+        button.secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid rgba(91, 108, 255, 0.14)
+        }
+
+        .exam-card {
+            background: var(--card);
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+            margin-bottom: 12px
+        }
+
+        .question {
+            display: flex;
+            gap: 12px
+        }
+
+        .qnum {
+            min-width: 36px;
+            height: 36px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            color: var(--muted)
+        }
+
+        .qbody {
+            flex: 1
+        }
+
+        .qtext {
+            font-weight: 600;
+            margin: 0 0 8px
+        }
+
+        .options {
+            display: grid;
+            gap: 8px
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #eef2ff;
+            cursor: pointer
+        }
+
+        .option input {
+            accent-color: var(--accent)
+        }
+
+        .option:hover {
+            background: #fbfbff
+        }
+
+        .results {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 12px
+        }
+
+        .score {
+            font-size: 1.2rem;
+            font-weight: 700
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(91, 108, 255, 0.12);
+            color: var(--accent);
+            font-weight: 700
+        }
+
+        .correct {
+            border-color: rgba(16, 185, 129, 0.12);
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.06), rgba(16, 185, 129, 0.02))
+        }
+
+        .wrong {
+            border-color: rgba(239, 68, 68, 0.12);
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.06), rgba(239, 68, 68, 0.02))
+        }
+
+        .answer-label {
+            font-weight: 600
+        }
+
+        footer {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 0.9rem
+        }
+
+        @media (max-width:720px) {
+            .question {
+                flex-direction: column
+            }
+
+            .meta {
+                display: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Examen tipo test</h1>
+            <div class="meta">25 preguntas · Tiempo libre</div>
+        </header>
+
+        <div class="controls">
+            <button id="submitBtn">Corregir examen</button>
+            <button class="secondary" id="resetBtn">Reiniciar</button>
+            <button class="secondary" id="showAnswersBtn">Mostrar respuestas</button>
+        </div>
+
+        <div id="questions"></div>
+
+        <div id="resultArea" class="exam-card" style="display:none">
+            <div class="results">
+                <div class="score" id="score"></div>
+                <div class="badge" id="badge"></div>
+            </div>
+            <div id="feedback" style="margin-top:8px;color:var(--muted)"></div>
+        </div>
+
+        <footer>Consejos: usa la tecla Tab para navegar; pulsa "Mostrar respuestas" para ver respuestas correctas sin
+            corregir.</footer>
+    </div>
+
+    <script>
+  
+    const questionsData = [
+      { q: '¿Cuál fue el apodo de Abderramán I?', options:['El Conquistador','El Emigrado','El Justo','El Inmigrante'], answer:1 },
+      { q: '¿A qué dinastía pertenecía Abderramán I?', options:['Abasí','Omeya','Fatimí','Almorávide'], answer:1 },
+      { q: '¿Cuál era la capital que estableció Abderramán I en la península ibérica?', options:['Sevilla','Toledo','Córdoba','Granada'], answer:2 },
+      { q: '¿En qué año aproximadamente llegó Abderramán I a la península ibérica?', options:['750','755','760','770'], answer:1 },
+      { q: '¿Contra qué emir de al‑Ándalus luchó para establecer su dominio?', options:['Yusuf al‑Fihrí','Al‑Ándalus ibn Musa','Musa ibn Nusayr','Almanzor'], answer:0 },
+      { q: '¿Qué tipo de ejército utilizó Abderramán I para sus conquistas en al‑Ándalus?', options:['Principalmente visigodos','Sirios, yemeníes y bereberes','Francos','Solo árabes de Bagdad'], answer:1 },
+      { q: '¿Qué ciudad sitió y conquistó Abderramán I que reforzó su poder en la península?', options:['Zaragoza','Barcelona','Santiago de Compostela','Córdoba'], answer:3 },
+      { q: '¿Cuál fue uno de los grandes proyectos arquitectónicos que emprendió durante su gobierno?', options:['La Alhambra','La Mezquita‑Catedral de Córdoba','La Giralda','El Alcázar de Sevilla'], answer:1 },
+      { q: '¿Qué motivación hubo para que Abderramán I huyera desde el Oriente hacia al‑Ándalus?', options:['Una peste','Una revuelta popular','La masacre de su familia por los abasíes','La invasión vikinga'], answer:2 },
+      { q: '¿Qué relación mantuvo Abderramán I con el califato de Bagdad (los abasíes)?', options:['Se alió con ellos','Fue su vasallo directo','Rompió su dependencia y se declaró independiente','Nunca supo de su existencia'], answer:2 },
+      { q: '¿Cuál era la tribu de origen de su madre?', options:['Quraysh','Nafza (bereber)','Kalb','Umayya'], answer:1 },
+      { q: '¿Qué ciudad fue el primer lugar donde desembarcó Abderramán I en la península ibérica?', options:['Almuñécar','Málaga','Valencia','Cádiz'], answer:0 },
+      { q: '¿Qué fecha aproximada marca el comienzo de su reinado como emir independiente de Córdoba?', options:['750','756','770','788'], answer:1 },
+      { q: '¿Cuál fue una de las principales dificultades internas a las que tuvo que enfrentarse durante su gobierno?', options:['La invasión mongola','Sublevaciones yemeníes y bereberes','Rebelión catalana','Guerra con Bizancio'], answer:1 },
+      { q: '¿Qué característica de gobernanza introdujo para estabilizar su territorio?', options:['Dividió el territorio en milicias independientes','Nombró cadíes y fomentó la integración de cristianos y judíos','Prohibió la agricultura','Excluyó a los mozárabes de la administración'], answer:1 },
+      { q: '¿Durante cuántos años aproximadamente reinó Abderramán I en Córdoba?', options:['10 años','20 años','32 años','50 años'], answer:2 },
+      { q: '¿Qué tipo de tributo exigió a los reinos cristianos del norte?', options:['No exigió ninguno','Un tributo anual','Territorio cedido','Moneda de oro solo'], answer:1 },
+      { q: '¿Qué cultivo o árbol introdujo tradicionalmente en la península durante su gobierno?', options:['Olivo','Palmera','Vid','Almendro'], answer:0 },
+      { q: '¿Quién fue su sucesor inmediato como emir de Córdoba?', options:['Almanzor','Hisham I','Abderramán III','Yusuf al‑Fihrí'], answer:1 },
+      { q: '¿Cómo era físicamente descrito Abderramán I según las crónicas?', options:['Bajito y moreno','Alto, rubio, tuerto, con lunar en la cara','De piel oscura y gran barba','Calvo y robusto'], answer:1 },
+      { q: '¿En qué año inició la construcción de la Mezquita de Córdoba?', options:['750','765','785','800'], answer:2 },
+      { q: '¿Cuál fue una de sus estrategias para asegurar la estabilidad política en su emirato?', options:['Se aisló del pueblo','Compró esclavos para su ejército','Eliminó todo comercio','Prohibió la construcción de ciudades'], answer:1 },
+      { q: '¿Qué acontecimiento marcó el fin del califato omeya en Damasco y forzó su huida?', options:['La invasión vikinga','La masacre de los omeyas en 750','Una plaga','Un tratado de paz'], answer:1 },
+      { q: '¿Qué característica tenía su ejército que era distinta a los anteriores en al‑Ándalus?', options:['Era formado solo por esclavos','Era multirracial con bereberes, yemeníes, sirios','Era completamente navarro','No tenía caballería'], answer:1 },
+      { q: '¿Cuál fue uno de los logros más importantes de su gobierno para el territorio del emirato?', options:['Pérdida de todas las fronteras','Establecimiento de un estado organizado, fuerte e independiente','Transformar la península en un desierto','Dejar al emirato sin ejército'], answer:1 }
+    ];
+
+    
+    const container = document.getElementById('questions');
+    function renderQuestions(){
+      container.innerHTML = '';
+      questionsData.forEach((item, idx) => {
+        const card = document.createElement('article');
+        card.className = 'exam-card';
+        card.setAttribute('data-index', idx);
+
+        const q = document.createElement('div'); q.className='question';
+        q.innerHTML = `
+          <div class="qnum">${idx+1}</div>
+          <div class="qbody">
+            <p class="qtext">${item.q}</p>
+            <div class="options" role="list">
+            </div>
+          </div>
+        `;
+
+        const optionsDiv = q.querySelector('.options');
+        item.options.forEach((opt, i) => {
+          const label = document.createElement('label');
+          label.className = 'option';
+          label.tabIndex = 0;
+          label.innerHTML = `
+            <input type="radio" name="q${idx}" value="${i}" aria-label="Opción ${i+1} para pregunta ${idx+1}">
+            <span class="answer-label">${String.fromCharCode(65+i)}. </span>
+            <span style="margin-left:6px">${opt}</span>
+          `;
+         
+          label.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); label.querySelector('input').checked = true; } });
+          optionsDiv.appendChild(label);
+        });
+
+        card.appendChild(q);
+        container.appendChild(card);
+      });
+    }
+
+    
+    function grade(){
+      let correct = 0;
+      questionsData.forEach((item, idx)=>{
+        const card = container.querySelector(`.exam-card[data-index='${idx}']`);
+        const radios = card.querySelectorAll('input[type=radio]');
+        let selected = -1;
+        radios.forEach(r => { if(r.checked) selected = Number(r.value); });
+        
+        card.querySelectorAll('.option').forEach(el=>el.classList.remove('correct','wrong'));
+        if(selected === item.answer){
+          correct++; card.querySelectorAll('.option')[selected].classList.add('correct');
+        } else {
+          if(selected>=0) card.querySelectorAll('.option')[selected].classList.add('wrong');
+          
+          card.querySelectorAll('.option')[item.answer].classList.add('correct');
+        }
+      });
+
+      
+      const pct = Math.round((correct / questionsData.length) * 100);
+      document.getElementById('resultArea').style.display='block';
+      document.getElementById('score').textContent = `Nota: ${correct} / ${questionsData.length} (${pct}%)`;
+      const badge = document.getElementById('badge');
+      badge.textContent = pct>=90? 'Excelente' : pct>=70? 'Bien' : pct>=50? 'Suficiente' : 'Insuficiente';
+      document.getElementById('feedback').textContent = pct>=70? 'Buen trabajo. Revisa las preguntas marcadas en rojo.' : 'Repasa los temas marcados en rojo y vuelve a intentarlo.';
+
+      
+      document.querySelectorAll('input[type=radio]').forEach(r => r.disabled = true);
+    }
+
+    function resetExam(){
+      document.getElementById('resultArea').style.display='none';
+      renderQuestions();
+    }
+
+    function showAnswers(){
+      
+      questionsData.forEach((item, idx)=>{
+        const card = container.querySelector(`.exam-card[data-index='${idx}']`);
+        card.querySelectorAll('.option').forEach(el=>el.classList.remove('correct','wrong'));
+        card.querySelectorAll('.option')[item.answer].classList.add('correct');
+      });
+    }
+
+    
+    document.getElementById('submitBtn').addEventListener('click', grade);
+    document.getElementById('resetBtn').addEventListener('click', resetExam);
+    document.getElementById('showAnswersBtn').addEventListener('click', showAnswers);
+
+    
+    renderQuestions();
+    </script>
+</body>
+
+</html>

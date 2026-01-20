@@ -1,0 +1,118 @@
+body {
+    background-color: #f8f3ed;
+    color: #2b2b2b;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+
+
+
+h1 {
+    margin: 20px auto;
+}
+
+h2 {
+    color: #7a4a21;
+    border-bottom: 2px solid #cfa77d;
+    padding-bottom: 5px;
+}
+
+main {
+    width: 70%;
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+.intro, .otros, .descarga {
+    margin-bottom: 30px;
+}
+
+.galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.tarjeta {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.tarjeta img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid #ccc;
+}
+
+.tarjeta h3 {
+    color: #7a4a21;
+    font-size: 18px;
+    margin: 10px;
+}
+
+.tarjeta p {
+    margin: 10px;
+    font-size: 14px;
+}
+
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.boton {
+    display: inline-block;
+    background-color: #a37b59;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.boton:hover {
+    background-color: #8c6647;
+}
+
+.volver {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.volver a {
+    color: #7a4a21;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+footer {
+    background-color: #a37b59;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: 40px;
+}
+.volver {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.volver a {
+    color: #7a4a21;
+    font-weight: bold;
+    text-decoration: none;
+     
+}   
+
+nav li {
+    list-style: none;
+    display: inline-block;
+    padding: 4px 70px;
+    text-align: center;
+    background-color: gray;
+}
+
+
